@@ -1,0 +1,214 @@
+call pathogen#infect()
+let mapleader = "\\"
+set nocompatible
+set viminfo='1000,f1,:1000,/1000
+set history=1000
+
+
+" ---------- sort of ui settings ----------
+syntax on
+set cursorline
+set number
+set nowrap
+set vb
+set ruler
+set statusline=%<%f\ %h%m%r%=%{fugitive#statusline()}\ \ %-14.(%l,%c%V%)\ %P
+let &colorcolumn="80,".join(range(120,999),",")
+let g:buftabs_only_basename=1
+let g:buftabs_marker_modified = "+"
+
+" toggle whitespace visibility with <Leader>s
+nmap <Leader>s :set list!<CR>
+set listchars=tab:▸\ ,trail:·,extends:❯,precedes:❮,nbsp:×,eol:¬
+
+" <Leader>L = Toggle line numbers
+map <Leader>L :set invnumber<CR>
+
+" new splits open to right and bottom
+set splitbelow
+set splitright
+
+
+" ---------- generic behaviour ----------
+set list
+set tabstop=4
+set shiftwidth=4
+set hidden
+filetype indent on
+filetype plugin on
+set autoindent
+
+" set expandtab
+set wildignore=.svn,CVS,.git,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,node_modules/*
+
+" enable backspace
+set backspace=indent,eol,start
+
+" allow saving of files as sudo when I forgot to start vim using sudo
+cmap w!! %!sudo tee > /dev/null %
+
+" F2 = paste toggle (in insert mode, pasting indented text behavior changes)
+set pastetoggle=<F2>
+
+" just for funs, random colour scheme
+map <silent> <Leader>x :RandomColorScheme<CR>
+
+" <Leader>v = Paste
+map <Leader>v "+gP
+
+" <Leader>c = Copy
+map <Leader>c "+y
+
+" accidentally pressing Shift K will no longer open stupid man entry
+noremap K <nop>
+
+" edit and reload .vimrc files
+nmap <silent> <Leader>ev :e $MYVIMRC<CR>
+nmap <silent> <Leader>es :so $MYVIMRC<CR>
+
+" <Leader>cd switch to the directory of the open buffer
+map <Leader>cd :cd %:p:h<CR>
+
+
+" ---------- text navigation ----------
+" prevent cursor from moving to beginning of line when switching buffers
+set nostartofline
+
+" keep the cursor in place while joining lines
+nnoremap J mzJ`z
+
+" H = Home, L = End
+noremap H ^
+noremap L $
+vnoremap L g_
+
+
+" ---------- window navigation ----------
+" <Leader>hljk = Move between windows
+nnoremap <Leader>h <C-w>h
+nnoremap <Leader>l <C-w>l
+nnoremap <Leader>j <C-w>j
+nnoremap <Leader>k <C-w>k
+
+
+" ---------- buffer navigation ----------
+" Ctrl Left/h & Right/l cycle between buffers
+noremap <silent> <C-left> :bprev<CR>
+noremap <silent> <C-h> :bprev<CR>
+noremap <silent> <C-right> :bnext<CR>
+noremap <silent> <C-l> :bnext<CR>
+
+" <Leader>q Closes the current buffer
+nnoremap <silent> <Leader>q :Bclose<CR>
+
+" <Leader>Q Closes the current window
+nnoremap <silent> <Leader>Q <C-w>c
+
+
+" --------- searching ---------
+set incsearch
+set ignorecase
+set smartcase
+set hlsearch
+
+" Clear search highlights when pressing <Leader>b
+nnoremap <silent> <leader>b :nohlsearch<CR>
+
+" http://www.vim.org/scripts/script.php?script_id=2572
+" <Leader>a will open a prompt for a term to search for
+noremap <leader>a :Ack
+
+" <Leader>A will close the new window created for that ack search
+noremap <leader>A <C-w>j<C-w>c<C-w>l
+
+let g:ackprg="ack -H --nocolor --nogroup --column"
+
+" ctrlp will load from the cwd, makes it easier with all these nested repos
+let g:ctrlp_working_path_mode = ''
+
+" ignores for ctrlp
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|coverage|target|dist)|(\.(swp|ico|git|svn))$'
+
+"type S, then type what you're looking for, a /, and what to replace it with
+nmap S :%s//g<LEFT><LEFT>
+vmap S :s//g<LEFT><LEFT>
+
+
+" ---------- nerdtree settings ----------
+let NERDTreeIgnore=['CVS','\.dSYM$']
+
+" setting root dir in nerdtree also sets vims cd
+let NERDTreeChDirMode=2
+
+" toggle visibility using <Leader>n
+noremap <silent> <Leader>n :NERDTreeToggle<CR>
+
+" these prevent accidentally loading files while focused on nerdtree
+autocmd FileType nerdtree noremap <buffer> <c-left> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-h> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-l> <nop>
+
+" make sure nerdtree is open if opening vim with no specific file
+autocmd vimenter * if !argc() | NERDTree | endif
+
+" close vim if nerdtree is the only buffer left
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" hides guff from nerdtree
+let NERDTreeMinimalUI=1
+
+
+" ---------- aitline settings ----------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+
+" ---------- gitgutter settings ----------
+let g:gitgutter_sign_added = '█'
+let g:gitgutter_sign_modified = '█'
+let g:gitgutter_sign_removed = '█'
+let g:gitgutter_sign_removed_first_line = '^^'
+let g:gitgutter_sign_modified_removed = '█_'
+
+
+" ---------- php documentor settings ---------
+au BufRead,BufNewFile *.php inoremap <buffer> <C-B> :call PhpDoc()<CR>
+au BufRead,BufNewFile *.php nnoremap <buffer> <C-B> :call PhpDoc()<CR>
+au BufRead,BufNewFile *.php vnoremap <buffer> <C-B> :call PhpDocRange()<CR>
+
+
+" ---------- fugitive settings ----------
+" https://github.com/tpope/vim-fugitive
+nnoremap <Leader>gs :Gstatus<CR>
+nnoremap <Leader>gr :Gremove<CR>
+nnoremap <Leader>gl :Glog<CR>
+nnoremap <Leader>gb :Gblame<CR>
+nnoremap <Leader>gm :Gmove
+nnoremap <Leader>gp :Ggrep
+nnoremap <Leader>gR :Gread<CR>
+nnoremap <Leader>gg :Git
+nnoremap <Leader>gd :Gdiff<CR>
+
+
+" ---------- text editing ----------
+" <Leader>T = Delete all Trailing space in file
+map <Leader>T :%s/\s\+$//<CR>
+
+" <Leader>R = Converts tabs to spaces in document
+map <Leader>R :retab<CR>
+
+" Deletes trailing space in file upon write
+"autocmd BufWritePre * :%s/\s\+$//e
+
+
+" ---------- visual settings ----------
+set t_Co=256
+colorscheme atom-dark-256
+set mouse=a
+
+
+" ---------- local overrides ----------
+if filereadable($HOME.'/.vimrc_local')
+	source $HOME/.vimrc_local
+endif

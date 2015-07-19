@@ -1,0 +1,14 @@
+#!/bin/bash
+set -ex
+
+DOT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+function vim_symlinks_check() {
+    [ -e "${HOME}/.vim" ] && mv -iv "${HOME}/.vim" "${HOME}/.vim.bak"
+    [ -e "${HOME}/.vimrc" ] && mv -iv "${HOME}/.vimrc" "${HOME}/.vimrc.bak"
+
+    ln -si "${DOT_ROOT}/vim" "${HOME}/.vim"
+    ln -si "${DOT_ROOT}/vim/rc" "${HOME}/.vimrc"
+}
+
+vim_symlinks_check
