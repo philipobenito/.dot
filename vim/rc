@@ -178,6 +178,9 @@ au BufRead,BufNewFile *.php nnoremap <buffer> <C-B> :call PhpDoc()<CR>
 au BufRead,BufNewFile *.php vnoremap <buffer> <C-B> :call PhpDocRange()<CR>
 
 
+" ---------- phpcomplete settings ----------
+autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
+
 " ---------- fugitive settings ----------
 " https://github.com/tpope/vim-fugitive
 nnoremap <Leader>gs :Gstatus<CR>
