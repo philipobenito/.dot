@@ -207,11 +207,19 @@ map <Leader>R :retab<CR>
 
 " ---------- visual settings ----------
 set t_Co=256
-colorscheme atom-dark-256
+colorscheme OceanicNext
 set mouse=a
-
 
 " ---------- local overrides ----------
 if filereadable($HOME.'/.vimrc_local')
 	source $HOME/.vimrc_local
 endif
+
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+hi htmlArg gui=italic
+hi Comment gui=italic
+hi Type    gui=italic
+hi htmlArg cterm=italic
+hi Comment cterm=italic
+hi Type    cterm=italic
